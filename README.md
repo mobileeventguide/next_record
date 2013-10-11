@@ -38,4 +38,4 @@ e.previous # => previous record according to the defined order
 
 ## TODO
 
-* Write tests...
+* Write tests... (so far it is tested in an app it is used in)
