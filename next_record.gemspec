@@ -8,9 +8,9 @@ Gem::Specification.new do |spec|
   spec.version       = NextRecord::VERSION
   spec.authors       = ["Helge Rausch"]
   spec.email         = ["helge@rausch.io"]
-  spec.description   = %q{adds `next` and `previous` methods to your records}
-  spec.summary       = %q{adds `next` and `previous` methods to your records}
-  spec.homepage      = ""
+  spec.description   = %q{adds `next` and `previous` methods to your ActiveRecord instances}
+  spec.summary       = %q{adds `next` and `previous` methods to your ActiveRecord instances}
+  spec.homepage      = "https://github.com/mobileeventguide/next_record"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files`.split($/)
