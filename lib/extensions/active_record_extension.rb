@@ -5,38 +5,41 @@ module NextRecord
     end
 
     def next
-      next_record_sibling
+      next_record
     end
 
     def previous
-      next_record_sibling(-1)
+      next_record(-1)
     end
 
     module ClassMethods
-      def next_record_order(*order_args)
-        order_args.flatten!
-        define_singleton_method(:next_record_ordered) do
-          order(order_args)
-        end
+      attr_reader :next_record_options
 
-        flush_next_record_sibling_ids = lambda { @next_record_sibling_ids = nil }
-        after_create flush_next_record_sibling_ids
-        after_destroy flush_next_record_sibling_ids
-        after_save flush_next_record_sibling_ids
+      def next_record_order(*args)
+        args.flatten!
+        @next_record_options = (args.last.is_a?(Hash) ? args.pop : {})
+        define_singleton_method(:next_record_ordered) do
+          order(args)
+        end
       end
     end
 
     private
 
-    def next_record_sibling(offset=1)
-      klass = self.class.name.underscore.pluralize.to_sym
-      @next_record_sibling_ids ||=
-        event.send(klass).next_record_ordered.pluck(:id)
-      index = @next_record_sibling_ids.index(id)
-      next_id = @next_record_sibling_ids[index+offset]
-      Session.where(id: next_id).first
+    def next_record(offset=1)
+      relation = self.class.next_record_ordered
+      scope = self.class.next_record_options[:scope]
+      if scope
+        relation = relation.where(scope => send(scope))
+      end
+      ids = relation.pluck(:id)
+      index = ids.index(id) + offset
+      return nil if index < 0 || index >= ids.size
+      next_id = ids[index]
+      relation.where(id: next_id).first
     end
   end
 end
 
 ActiveRecord::Base.send(:include, NextRecord::ActiveRecordExtension)
+

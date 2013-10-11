@@ -1,6 +1,7 @@
 # NextRecord
 
-TODO: Write a gem description
+Extends ActiveRecord by adding `next` and `previous` instance methods, returning
+the next and previous record according to a predefined order.
 
 ## Installation
 
@@ -18,12 +19,23 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+Define an order in your model, using `next_record_order`. It takes the same
+arguments as ActiveRecord's `order` method:
 
-## Contributing
+```ruby
+class Person < ActiveRecord::Base
+  next_record_order 'lower(trim(last_name))', :id
+end
+```
 
-1. Fork it
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create new Pull Request
+Find the previous and next records:
+
+```ruby
+e = Person.first
+e.next # => next record according to the defined order
+e.previous # => previous record according to the defined order
+```
+
+## TODO
+
+* Write tests...
